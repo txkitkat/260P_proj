@@ -1,7 +1,6 @@
 # CompSci 260P Project1, #3 by Tiffany Mejia
 # ID:  26843836
 
-
 # A simple, undirected graph is called bipartite if we can perform the following. 
 # You are given two crayons, one blue and one gold. You want to color in each vertex in such a way that:
 #     Each vertex is exactly one color -- none are omitted, and none are both blue and gold.
