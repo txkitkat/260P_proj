@@ -12,9 +12,11 @@
 #     The journey you return from tsp_dynamic_program must begin at vertex zero. Code to adjust the journey accordingly is commented out in the provided file.
 #     I will provide test cases separately. Your program must run reasonably fast.
 
-#     You may assume all inputs are valid; for example, in costOfJourney, the second parameter will always be a permutation of the unsigned ints in the range of [0, n-1], where n is the number of vertices in the given graph. You do not need to do bounds checking or the like.
+#     You may assume all inputs are valid; for example, in costOfJourney, the second parameter will always be a permutation of
+#  the unsigned ints in the range of [0, n-1], where n is the number of vertices in the given graph. You do not need to do bounds checking or the like.
 
-# If you would like to reuse some or all of your code (not that of someone else) from other projects with proper documentation for part of this project, you are welcome to do so.
+# If you would like to reuse some or all of your code (not that of someone else) from other projects with proper documentation for part of this project,
+# you are welcome to do so.
 
 
 def tsp_dynamic_program():
