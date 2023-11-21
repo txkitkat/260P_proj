@@ -18,10 +18,13 @@ class Project4:
         self.retravel_edges = {} # (i:j)
 
     def doubletree(self, graph: list):
+        """
+            Double tree algorithm optimized for weighted graph input for 
+            Traveling Salesman Problem
+        """
         self.__init__()
         mst = self.minimum_spanning_tree(graph)
-        self.closed_path(mst)
-        print(self.path)
+        self.closed_path(mst) #finds closed loop path/euler circuit from MST
         hamiltonian_path = []
         for cell in self.path: # Find hamiltonian path using closed path from MST
             start_loc, end_loc = cell
@@ -36,7 +39,7 @@ class Project4:
                 continue
         hamiltonian_path.append(hamiltonian_path[0])
         self.costOfJourney(hamiltonian_path, graph, 1)
-
+        return hamiltonian_path # Final path from algorithm. Not optimal path but close approximation
     
     def minimum_spanning_tree(self, graph: list):
         """
