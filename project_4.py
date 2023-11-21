@@ -7,7 +7,7 @@ import copy
 import time
 import math
 from datetime import datetime
-
+from INPUT_TSP import tester3
 from collections import defaultdict
 
 class Project4:
@@ -35,7 +35,6 @@ class Project4:
             else:
                 continue
         hamiltonian_path.append(hamiltonian_path[0])
-
         self.costOfJourney(hamiltonian_path, graph, 1)
 
     
@@ -55,7 +54,7 @@ class Project4:
         edges = {} # dictionary of edges w their cost
         for i in range(verticies):
             for j in range(verticies):
-                if i == j: # Skip when cycling on the same index
+                if i == j or graph[i][j] == 0 or graph[i][j] == 'Inf': # Skip when cycling on the same index, or no path exists (0/Inf)
                     continue
                 edge_tuple = (i, j)
                 edge_tuple_inv = (j, i)
@@ -74,11 +73,11 @@ class Project4:
             vertex_1 = cell[0]
             vertex_2 = cell[1]
             is_cycle = self.is_cycle(cell, mst)
-            if not is_cycle:
+            if not is_cycle: # Path is not a cycle and can be added to the tree
                 mst[vertex_1].append(vertex_2)
                 mst[vertex_2].append(vertex_1)
                 visited.append(cell)
-
+        print(mst)
         return mst
 
     def is_cycle(self, cell: tuple, current_mst: list):
@@ -96,7 +95,7 @@ class Project4:
         temp_mst = copy.deepcopy(current_mst)
         temp_mst[v_1].append(v_2)
         temp_mst[v_2].append(v_1)
-        cycle = self.dfs(v_1, temp_mst, [])
+        cycle = self.dfs(v_1, temp_mst, []) # check if dfs can be performed
         return cycle
     
     def dfs(self, start_v, current_mst, visited=[]):
@@ -135,7 +134,7 @@ class Project4:
 
             @return: None
         """
-        if node is None:
+        if node is None: # find the best node to start with which is the node with least amount of edges
             min_e = math.inf
             for i in range(len(graph)):
                 if len(graph[i]) < min_e:
@@ -145,24 +144,24 @@ class Project4:
                     break
 
         possible_travel = graph[node]
-        for next_n in possible_travel:
-            if len(self.path) == (self.total_v -1)*2: # Done
+        for next_n in possible_travel: # Navigate to all adjacent nodes of current node
+            if len(self.path) == (self.total_v -1)*2: # Done, all possible edges have been navigated twice
                 return
             cell = (node, next_n)
             if self.visited.get(node, []) == [] or (self.visited.get(node, []) != [] and next_n not in self.visited[node]):
-                if node in self.visited.get(next_n, []):
-                    self.retravel_edges[node] = next_n
+                if node in self.visited.get(next_n, []): # find that trying to go back and forth along an edge
+                    self.retravel_edges[node] = next_n #travel back after other nodes have been navigated
                 else:
-                    self.visited[node].append(next_n)
+                    self.visited[node].append(next_n) 
                     self.path.append(cell)
-                    self.closed_path(graph, next_n)
+                    self.closed_path(graph, next_n) #transerve through the whole path of the adjacent node
 
             else:  
-                if len(self.visited[node]) == len(graph[node]) and len(self.path) < (self.total_v - 1)*2:
+                if len(self.visited[node]) == len(graph[node]) and len(self.path) < (self.total_v - 1)*2: #Rare condition where we need to backtrack since we hit a loop
                     if len(self.path) != (self.total_v -1)*2:
-                        self.retravel_edges[self.path[-1][0]] = self.path[-1][1]
-                        del self.path[-1]
-                        del self.visited[self.visited[node][-1]][-1]
+                        self.retravel_edges[self.path[-1][0]] = self.path[-1][1] # hit a loop and need to go back to previous node
+                        del self.path[-1]                                           # need to remove last node from path as it formed a loop
+                        del self.visited[self.visited[node][-1]][-1] 
                         return
                 continue
 
@@ -186,7 +185,7 @@ class Project4:
                 print(f"Traveling from {start_loc} -> {end_loc}: {graph[start_loc][end_loc]}")
             total_cost += graph[start_loc][end_loc]
         if verbose == 1:
-            print(f"TOTAL: {total_cost}\nPATH: {path}")
+            print(f"TOTAL: {total_cost: 0.3f}\nPATH: {path}")
         return total_cost
     
 
@@ -218,4 +217,3 @@ if __name__ == "__main__":
     th = Project4()
     th.doubletree(tester1)
     th.doubletree(tester2)
-    end = datetime.now()
