@@ -4,3 +4,5 @@ data_sets_holding2/
 data_sets_holding3/
 argentina.tsp
 argentina_tsp.npy
+data_set_holding/
+data_set_not_holding/

@@ -279,11 +279,12 @@ if __name__ == "__main__":
     import numpy as np
     th = FinalProject()
     #Ensure change to path that will be used for test data generation
-    if os.path.exists("results.txt"):
-        os.remove("results.txt")
-    # home_dir = "data_sets_holding3/"
+    # if os.path.exists("results.txt"):
+    #     os.remove("results.txt")
+    # home_dir = "data_set_holding/"
     # for filename in os.listdir(home_dir):
     #     test = []
+    #     n = filename.split("_")[0]
     #     data_test = np.load(f"{home_dir}{filename}", allow_pickle=False)
     #     for item in data_test:
     #         test.append(list(item))
@@ -297,28 +298,30 @@ if __name__ == "__main__":
     #     t1 = (start_2-start_1).total_seconds()
     #     t2 = (start_3-start_2).total_seconds()
     #     t3 = (end-start_3).total_seconds()
-    #     costs = f"{c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
+    #     costs = f"{n}, {c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
     #     print(costs)
     #     with open('results.txt','a') as tfile:
     #         tfile.write(costs)
-
-
-
-    test = []
-    data_test = np.load(f"500_100.npy", allow_pickle=False)
-    for item in data_test:
-        test.append(list(item))
-    start_1 = datetime.now()
-    c1 = th.nearest_neighbor(test)
-    start_2 = datetime.now()
-    c2 = th.doubletree(test)
-    start_3 = datetime.now()
-    c3 = th.christofides(test)
-    end = datetime.now()
-    t1 = (start_2-start_1).total_seconds()
-    t2 = (start_3-start_2).total_seconds()
-    t3 = (end-start_3).total_seconds()
-    costs = f"{c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
-    print(costs)
-    with open('results.txt','a') as tfile:
-        tfile.write(costs)
+    if os.path.exists("results_not_holding.txt"):
+        os.remove("results_not_holding.txt")
+    home_dir = "data_set_not_holding/"
+    for filename in os.listdir(home_dir):
+        test = []
+        n = filename.split("_")[0]
+        data_test = np.load(f"{home_dir}{filename}", allow_pickle=False)
+        for item in data_test:
+            test.append(list(item))
+        start_1 = datetime.now()
+        c1 = th.nearest_neighbor(test)
+        start_2 = datetime.now()
+        c2 = th.doubletree(test)
+        start_3 = datetime.now()
+        c3 = th.christofides(test)
+        end = datetime.now()
+        t1 = (start_2-start_1).total_seconds()
+        t2 = (start_3-start_2).total_seconds()
+        t3 = (end-start_3).total_seconds()
+        costs = f"{n}, {c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
+        print(costs)
+        with open('results_not_holding.txt','a') as tfile:
+            tfile.write(costs)
