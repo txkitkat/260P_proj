@@ -17,7 +17,7 @@ def write_distance_matrix(n, mean, sigma, iteration):
     distance_matrix += distance_matrix.T
 
     np.save(
-        f"test_{n}_{iteration+1}",
+        f"data_sets/{n}_{iteration+1}",
         distance_matrix,
         allow_pickle=False
     )
@@ -27,12 +27,13 @@ def write_distance_matrix(n, mean, sigma, iteration):
     #     print(list(i))
 
 if __name__ == "__main__":
-    for i in range(10):
-        # n = int(input("Enter the number of locations: "))
-        # mean = float(input("Enter the mean: "))
-        # sigma = float(input("Enter the standard deviation: "))
-        n = 10
-        mean = 20
-        sigma = 10
+    for N in [10, 100, 200, 300, 400, 500]:
+        for i in range(100):
+            # n = int(input("Enter the number of locations: "))
+            # mean = float(input("Enter the mean: "))
+            # sigma = float(input("Enter the standard deviation: "))
+            n = N
+            mean = 2*N
+            sigma = mean/4
 
-        write_distance_matrix(n, mean, sigma, i)
+            write_distance_matrix(n, mean, sigma, i)
