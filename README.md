@@ -9,7 +9,8 @@ To generate all results, do the following:
   1. Run python generate_traveling_salesman_problem.py
   2. Run final_project.py
   3. Wait for script to complete
-*CONSTRAINTS* Numpy must be installed to environment
+
+# CONSTRAINTS Numpy must be installed to environment
 
 The difference between holding and not holding data is that holding data follow the triangle inequality and non-holding data does not.
 
