@@ -6,7 +6,7 @@ This Final Project generates a results.txt and a results_not_holding.txt for dat
 All results will output in CSV format
 
 To generate all results, do the following:
-  1. Run python generate_traveling_salesman_problem.py
+  1. Run python generate_traveling_salesman_problem.py or place previously saved data_set_holding/ and data_set_not_holding/ directories under 260P_Proj/ directory
   2. Run final_project.py
   3. Wait for script to complete
 
