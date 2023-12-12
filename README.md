@@ -12,6 +12,6 @@ To generate all results, do the following:
 
 CONSTRAINTS: Numpy must be installed to environment
 
-The difference between holding and not holding data is that holding data follow the triangle inequality and non-holding data does not.
+The difference between holding and not holding data is that holding data follows the triangle inequality and non-holding data does not.
 
-Due to the size of data generated, testcase data cannot be push to the reop but can be regenerated locally to receive similar results.
+Due to the size of data generated, testcase data cannot be push to the repo but can be regenerated locally to receive similar results.

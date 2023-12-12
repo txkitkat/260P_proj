@@ -300,7 +300,7 @@ if __name__ == "__main__":
         t3 = (end-start_3).total_seconds()
         costs = f"{n}, {c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
         # print(costs)
-        with open('results.txt','a') as tfile:
+        with open('results_holding.txt','a') as tfile:
             tfile.write(costs)
 
     if os.path.exists("results_not_holding.txt"):
