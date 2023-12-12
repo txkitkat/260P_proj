@@ -2,7 +2,6 @@
 # ID:  26843836
 
 import copy
-import time
 import math
 from datetime import datetime
 from random import randint
@@ -47,6 +46,7 @@ class FinalProject:
         """
         self.__init__()
         mst = self.minimum_spanning_tree(graph)
+        # print(mst)
         self.closed_path(mst) #finds closed loop path/euler circuit from MST
         hamiltonian_path = []
         for cell in self.path: # Find hamiltonian path using closed path from MST
@@ -117,53 +117,72 @@ class FinalProject:
         mst = []*verticies # initializes MST adacency matrix
         for i in range(verticies):
             mst.append([])
+        result = []
+        new_graph = []
+        sub_graph = copy.deepcopy(graph)
 
-        edges = {} # dictionary of edges w their cost
-        for i in range(verticies):
-            for j in range(verticies):
-                if i == j or graph[i][j] == 0 or graph[i][j] == 'Inf': # Skip when cycling on the same index, or no path exists (0/Inf)
-                    continue
-                edge_tuple = (i, j)
-                edge_tuple_inv = (j, i)
-                if edge_tuple in edges.keys() or edge_tuple_inv in edges.keys(): # edge already saved
-                    continue
-                else:
-                    edges[edge_tuple] = graph[i][j]
+        for i in range(len(sub_graph)):
+            for j in range(len(sub_graph)):
+                if i != j:
+                    edge = (i, j, sub_graph[i][j])
+                    new_graph.append(edge)
 
-        sorted_edges = dict(sorted(edges.items(), key=lambda item: item[1])) # redo sort of smaller pruned list
+        new_graph = sorted(new_graph,key=lambda item: item[2]) # sort all items in graph by smallest weight edge
+        parent = [] 
+        rank = []
+        i = 0
+        e = 0
 
-        visited = []
+        # Create V subsets with single elements
+        for v in range(len(sub_graph)):
+            parent.append(v)
+            rank.append(0)
 
-        for cell in sorted_edges.keys():
-            if len(visited) == verticies - 1: # MST has been formed, no need to see remaining edges
-                break
-            vertex_1 = cell[0]
-            vertex_2 = cell[1]
-            is_cycle = self.is_cycle(cell, mst)
-            if not is_cycle: # Path is not a cycle and can be added to the tree
-                mst[vertex_1].append(vertex_2)
-                mst[vertex_2].append(vertex_1)
-                visited.append(cell)
+        # Number of edges to be taken is equal to V-1
+        while e < (len(sub_graph) - 1):
+
+            u, v, w = new_graph[i] # pick smallest current edge
+            i = i + 1
+            x = self.find(parent, u)
+            y = self.find(parent ,v)
+
+            # If including this edge does't cause cycle, include it
+            if x != y:
+                e = e + 1 # increment edges
+                result.append([u,v,w])
+                self.union(parent, rank, x, y)            
+            # Else discard the edge
+
+        for edge in result:
+            mst[edge[0]].append(edge[1])
+            mst[edge[1]].append(edge[0])
         return mst
 
-    def is_cycle(self, cell: tuple, current_mst: list):
+    def find(self, parent: list, i: int):
         """
-            Adjust the current MST with the new potential edge to see if the added edge will
-            create a cycle in the MST.
-
-            @param cell: (tuple): Edge in tree (i, j) from i to j
-            @param current_mst: (list) Current edges that are contained in MST
-
-            @return: (bool) True or False if the current cell causes a cycle
+            Given the list of parent nodes, find the parent of vertex i
         """
-        v_1 = cell[0]
-        v_2 = cell[1]
-        temp_mst = copy.deepcopy(current_mst)
-        temp_mst[v_1].append(v_2)
-        temp_mst[v_2].append(v_1)
-        cycle = self.dfs(v_1, temp_mst, []) # check if dfs can be performed
-        return cycle
-    
+        if parent[i] == i:
+            return i
+        return self.find(parent, parent[i])
+ 
+    def union(self, parent: list, rank: list, x: int, y: int):
+        """
+            Does a union of sets of vertex u and v using rank
+        """
+        xroot = self.find(parent, x)
+        yroot = self.find(parent, y)
+ 
+        if rank[xroot] < rank[yroot]:    # Attach smaller rank tree under root of high rank tree
+            parent[xroot] = yroot
+        elif rank[xroot] > rank[yroot]:
+            parent[yroot] = xroot
+ 
+        
+        else : # If ranks are same, then make one as root and increment
+            parent[yroot] = xroot
+            rank[yroot] += 1
+ 
     def dfs(self, start_v, current_mst, visited=[]):
         """
             Runs DFS to check if there is a cycle in the new potential MST
@@ -210,7 +229,7 @@ class FinalProject:
                     break
         possible_travel = graph[node]
         for next_n in possible_travel: # Navigate to all adjacent nodes of current node
-            if len(self.path) == (self.total_v -1)*2: # Done, all possible edges have been navigated twice
+            if len(self.path) == (self.total_v - 1)*2: # Done, all possible edges have been navigated twice
                 return
             cell = (node, next_n)
             if self.visited.get(node, []) == [] or (self.visited.get(node, []) != [] and next_n not in self.visited[node]):
@@ -253,52 +272,57 @@ class FinalProject:
             print(f"TOTAL: {total_cost: 0.3f}\nPATH: {path}")
         return total_cost
     
-  
+
 if __name__ == "__main__":
     import os
     import numpy as np
     th = FinalProject()
+
     #Ensure change to path that will be used for test data generation
-    if os.path.exists("results.txt"):
-        os.remove("results.txt")
-    # home_dir = "data_sets_holding3/"
-    # for filename in os.listdir(home_dir):
-    #     test = []
-    #     data_test = np.load(f"{home_dir}{filename}", allow_pickle=False)
-    #     for item in data_test:
-    #         test.append(list(item))
-    #     start_1 = datetime.now()
-    #     c1 = th.nearest_neighbor(test)
-    #     start_2 = datetime.now()
-    #     c2 = th.doubletree(test)
-    #     start_3 = datetime.now()
-    #     c3 = th.christofides(test)
-    #     end = datetime.now()
-    #     t1 = (start_2-start_1).total_seconds()
-    #     t2 = (start_3-start_2).total_seconds()
-    #     t3 = (end-start_3).total_seconds()
-    #     costs = f"{c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
-    #     print(costs)
-    #     with open('results.txt','a') as tfile:
-    #         tfile.write(costs)
+    if os.path.exists("results_holding.txt"):
+        os.remove("results_holding.txt")
+    home_dir = "data_set_holding/"
+    for filename in os.listdir(home_dir):
+        test = []
+        n = filename.split("_")[0]
+        data_test = np.load(f"{home_dir}{filename}", allow_pickle=False)
+        for item in data_test:
+            test.append(list(item))
+        start_1 = datetime.now()
+        c1 = th.nearest_neighbor(test)
+        start_2 = datetime.now()
+        c2 = th.doubletree(test)
+        start_3 = datetime.now()
+        c3 = th.christofides(test)
+        end = datetime.now()
+        t1 = (start_2-start_1).total_seconds()
+        t2 = (start_3-start_2).total_seconds()
+        t3 = (end-start_3).total_seconds()
+        costs = f"{n}, {c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
+        # print(costs)
+        with open('results.txt','a') as tfile:
+            tfile.write(costs)
 
-
-
-    test = []
-    data_test = np.load(f"argentina_tsp.npy", allow_pickle=False)
-    for item in data_test:
-        test.append(list(item))
-    start_1 = datetime.now()
-    c1 = th.nearest_neighbor(test)
-    start_2 = datetime.now()
-    c2 = th.doubletree(test)
-    start_3 = datetime.now()
-    c3 = th.christofides(test)
-    end = datetime.now()
-    t1 = (start_2-start_1).total_seconds()
-    t2 = (start_3-start_2).total_seconds()
-    t3 = (end-start_3).total_seconds()
-    costs = f"{c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
-    print(costs)
-    with open('results.txt','a') as tfile:
-        tfile.write(costs)
+    if os.path.exists("results_not_holding.txt"):
+        os.remove("results_not_holding.txt")
+    home_dir = "data_set_not_holding/"
+    for filename in os.listdir(home_dir):
+        test = []
+        n = filename.split("_")[0]
+        data_test = np.load(f"{home_dir}{filename}", allow_pickle=False)
+        for item in data_test:
+            test.append(list(item))
+        start_1 = datetime.now()
+        c1 = th.nearest_neighbor(test)
+        start_2 = datetime.now()
+        c2 = th.doubletree(test)
+        start_3 = datetime.now()
+        c3 = th.christofides(test)
+        end = datetime.now()
+        t1 = (start_2-start_1).total_seconds()
+        t2 = (start_3-start_2).total_seconds()
+        t3 = (end-start_3).total_seconds()
+        costs = f"{n}, {c1}, {c2}, {c3}, {t1}, {t2}, {t3}\n"
+        # print(costs)
+        with open('results_not_holding.txt','a') as tfile:
+            tfile.write(costs)
